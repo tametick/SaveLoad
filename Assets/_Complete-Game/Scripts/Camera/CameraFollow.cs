@@ -11,7 +11,7 @@ namespace CompleteProject {
 		#region ISavable implementation
 
 		public override void LoadData (IData d) {
-			var oldData = (CameraFollowData)d;
+			var oldData = d as CameraFollowData;
 
 			transform.position = oldData.position;
 

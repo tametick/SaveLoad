@@ -4,7 +4,9 @@ using UnitySampleAssets.CrossPlatformInput;
 namespace CompleteProject {
 	[System.Serializable]
 	public class PlayerMovementData: IData {
-
+		public Vector3 movement;
+		public Vector3 position;
+		public Vector3 rotation;
 	}
 
 	public class PlayerMovement : Savable {
@@ -12,7 +14,15 @@ namespace CompleteProject {
 		public float speed = 6f;
 
 		// The vector to store the direction of the player's movement.
-		Vector3 movement;
+		public Vector3 movement {
+			get {
+				return (data as PlayerMovementData).movement;
+			}
+			set {
+				(data as PlayerMovementData).movement = value;
+			}
+		}
+
 		// Reference to the animator component.
 		Animator anim;
 		// Reference to the player's rigidbody.
@@ -25,6 +35,7 @@ namespace CompleteProject {
 		#endif
 
 		void Awake () {
+			data = new PlayerMovementData ();
 #if !MOBILE_INPUT
 			// Create a layer mask for the floor layer.
 			floorMask = LayerMask.GetMask ("Floor");
@@ -35,10 +46,23 @@ namespace CompleteProject {
 			playerRigidbody = GetComponent <Rigidbody> ();
 		}
 
+
+		public new IData GetData () {
+			// 'movement' is always kept up to date, but the other data needs to be updated here
+			(data as PlayerMovementData).position = transform.position;
+			(data as PlayerMovementData).rotation = transform.rotation.eulerAngles;
+			return data;
+		}
+
 		#region implemented abstract members of Savable
 
 		public override void LoadData (IData d) {
-			throw new System.NotImplementedException ();
+			PlayerMovementData oldData = d as PlayerMovementData;
+
+			transform.position = oldData.position;
+			transform.rotation = Quaternion.Euler (oldData.rotation);
+
+			data = oldData;
 		}
 
 		#endregion
@@ -61,7 +85,7 @@ namespace CompleteProject {
 
 		void Move (float h, float v) {
 			// Set the movement vector based on the axis input.
-			movement.Set (h, 0f, v);
+			movement = new Vector3 (h, 0f, v);
             
 			// Normalise the movement vector and make it proportional to the speed per second.
 			movement = movement.normalized * speed * Time.deltaTime;

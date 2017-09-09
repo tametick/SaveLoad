@@ -55,7 +55,8 @@ namespace CompleteProject {
 
 		SaveData saveData;
 
-		public CameraFollow cameraFollow;
+		public GameObject mainCamera;
+		public GameObject player;
 
 		void Start () {
 			saveData = new SaveData ();
@@ -68,7 +69,8 @@ namespace CompleteProject {
 
 				// clear old saved data & deserialize current game state 
 				saveData.Clear ();
-				saveData.Add (cameraFollow.GetData ());
+				saveData.Add (mainCamera.GetComponent<CameraFollow> ().GetData ());
+				saveData.Add (player.GetComponent<PlayerMovement> ().GetData ());
 				var saveString = saveData.ToString ();
 
 				Time.timeScale = 1;
@@ -84,7 +86,8 @@ namespace CompleteProject {
 				saveData.FromString (loadString);
 
 				// load into current game
-				cameraFollow.LoadData (saveData.ShiftData<CameraFollowData> ());
+				mainCamera.GetComponent<CameraFollow> ().LoadData (saveData.ShiftData<CameraFollowData> ());
+				player.GetComponent<PlayerMovement> ().LoadData (saveData.ShiftData<PlayerMovementData> ());
 
 				Time.timeScale = 1;
 				print ("loaded\n" + loadString);
