@@ -7,16 +7,10 @@ namespace CompleteProject {
 		public Vector3 position;
 	}
 
-	public class CameraFollow : MonoBehaviour, ISavable {
-		CameraFollowData data;
+	public class CameraFollow : Savable {
+		#region ISavable implementation
 
-		#region IData implementation
-
-		public IData GetData () {
-			return data;
-		}
-
-		public void LoadData (IData d) {
+		public override void LoadData (IData d) {
 			var oldData = (CameraFollowData)d;
 
 			transform.position = oldData.position;
@@ -26,15 +20,13 @@ namespace CompleteProject {
 
 		#endregion
 
-		public Transform target;
 		// The position that that camera will be following.
-		public float smoothing = 5f;
+		public Transform target;
 		// The speed with which the camera will be following.
+		public float smoothing = 5f;
 
-
-		Vector3 offset;
 		// The initial offset from the target.
-
+		Vector3 offset;
 
 		void Start () {
 			data = new CameraFollowData ();
@@ -42,14 +34,13 @@ namespace CompleteProject {
 			offset = transform.position - target.position;
 		}
 
-
 		void FixedUpdate () {
 			// Create a postion the camera is aiming for based on the offset from the target.
 			Vector3 targetCamPos = target.position + offset;
 
 			// Smoothly interpolate between the camera's current position and it's target position.
 			transform.position = Vector3.Lerp (transform.position, targetCamPos, smoothing * Time.deltaTime);
-			data.position.Set (transform.position.x, transform.position.y, transform.position.z);
+			(data as CameraFollowData).position.Set (transform.position.x, transform.position.y, transform.position.z);
 		}
 	}
 }

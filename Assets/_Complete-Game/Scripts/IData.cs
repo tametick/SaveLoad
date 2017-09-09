@@ -1,4 +1,5 @@
-﻿
-public interface IData {
+﻿namespace CompleteProject {
+	public interface IData {
 
+	}
 }
