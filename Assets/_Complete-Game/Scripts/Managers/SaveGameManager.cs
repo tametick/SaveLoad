@@ -5,10 +5,14 @@ using UnityEngine;
 
 namespace CompleteProject {
 	public class SaveGameManager : MonoBehaviour {
-		const string separator = "%SP%";
+		const string saveName = "SavedGame";
+		const string saveKey = "1";
+		const string loadKey = "2";
 
 		[System.Serializable]
 		public class SaveData {
+			const string separator = "%SP%";
+
 			public List<string> datas;
 
 			public SaveData () {
@@ -59,24 +63,27 @@ namespace CompleteProject {
 
 		void Update () {
 			
-			if (Input.GetKeyUp ("1")) {
+			if (Input.GetKeyUp (saveKey)) {
 				Time.timeScale = 0;
 
+				// clear old saved data & deserialize current game state 
 				saveData.Clear ();
 				saveData.Add (cameraFollow.GetData ());
-
 				var saveString = saveData.ToString ();
 
 				Time.timeScale = 1;
-				PlayerPrefs.SetString ("SavedGame", saveString);
+
+				// write game state to storage
+				PlayerPrefs.SetString (saveName, saveString);
 				print ("saved\n" + saveString);
-			} else if (Input.GetKeyUp ("2")) {
+			} else if (Input.GetKeyUp (loadKey)) {
 				Time.timeScale = 0;
 
-				// get from storage/string
-				var loadString = PlayerPrefs.GetString ("SavedGame");
+				// get serialized game state from storage & deserialize it
+				var loadString = PlayerPrefs.GetString (saveName);
 				saveData.FromString (loadString);
 
+				// load into current game
 				cameraFollow.LoadData (saveData.ShiftData<CameraFollowData> ());
 
 				Time.timeScale = 1;
