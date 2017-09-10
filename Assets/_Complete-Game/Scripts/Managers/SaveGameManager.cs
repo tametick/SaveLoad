@@ -72,6 +72,7 @@ namespace CompleteProject {
 				saveData.Add (mainCamera.GetComponent<CameraFollow> ().GetData ());
 				saveData.Add (player.GetComponent<PlayerMovement> ().GetData ());
 				saveData.Add (player.GetComponent<PlayerHealth> ().GetData ());
+				saveData.Add (player.GetComponentInChildren<PlayerShooting> ().GetData ());
 				var saveString = saveData.ToString ();
 
 				Time.timeScale = 1;
@@ -90,6 +91,7 @@ namespace CompleteProject {
 				mainCamera.GetComponent<CameraFollow> ().LoadData (saveData.ShiftData<CameraFollowData> ());
 				player.GetComponent<PlayerMovement> ().LoadData (saveData.ShiftData<PlayerMovementData> ());
 				player.GetComponent<PlayerHealth> ().LoadData (saveData.ShiftData<PlayerHealthData> ());
+				player.GetComponentInChildren<PlayerShooting> ().LoadData (saveData.ShiftData<PlayerShootingData> ());
 
 				Time.timeScale = 1;
 				print ("loaded\n" + loadString);

@@ -4,7 +4,7 @@ using UnitySampleAssets.CrossPlatformInput;
 namespace CompleteProject {
 	[System.Serializable]
 	public class PlayerShootingData: IData {
-
+		public float timer;
 	}
 
 	public class PlayerShooting : Savable {
@@ -17,7 +17,15 @@ namespace CompleteProject {
 
 
 		// A timer to determine when to fire.
-		float timer;
+		public float timer {
+			get {
+				return (data as PlayerShootingData).timer;
+			}
+			set {
+				(data as PlayerShootingData).timer = value;
+			}
+		}
+
 		// A ray from the gun end forwards.
 		Ray shootRay = new Ray ();
 		// A raycast hit to get information about what was hit.
@@ -39,6 +47,8 @@ namespace CompleteProject {
 
 
 		void Awake () {
+			data = new PlayerShootingData ();
+
 			// Create a layer mask for the Shootable layer.
 			shootableMask = LayerMask.GetMask ("Shootable");
 
@@ -53,7 +63,7 @@ namespace CompleteProject {
 		#region implemented abstract members of Savable
 
 		public override void LoadData (IData d) {
-			throw new System.NotImplementedException ();
+			data = d;
 		}
 
 		#endregion
