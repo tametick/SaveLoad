@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace CompleteProject {
 	public class EnemyManagerData : IData {
@@ -6,6 +7,8 @@ namespace CompleteProject {
 	}
 
 	public class EnemyManager : Savable {
+		public static List<GameObject> enemies;
+
 		// Reference to the player's heatlh.
 		public PlayerHealth playerHealth;
 		// The enemy prefab to be spawned.
@@ -26,6 +29,7 @@ namespace CompleteProject {
 		public Transform[] spawnPoints;
 
 		void Awake () {
+			enemies = new List<GameObject> ();
 			data = new EnemyManagerData ();
 		}
 
@@ -59,7 +63,7 @@ namespace CompleteProject {
 			int spawnPointIndex = Random.Range (0, spawnPoints.Length);
 
 			// Create an instance of the enemy prefab at the randomly selected spawn point's position and rotation.
-			Instantiate (enemy, spawnPoints [spawnPointIndex].position, spawnPoints [spawnPointIndex].rotation);
+			enemies.Add (Instantiate (enemy, spawnPoints [spawnPointIndex].position, spawnPoints [spawnPointIndex].rotation));
 		}
 	}
 }

@@ -4,7 +4,8 @@ using System.Collections;
 namespace CompleteProject {
 	[System.Serializable]
 	public class EnemyAttackData: IData {
-		
+		public bool playerInRange;
+		public float timer;
 	}
 
 	public class EnemyAttack : Savable {
@@ -23,12 +24,31 @@ namespace CompleteProject {
 		// Reference to this enemy's health.
 		EnemyHealth enemyHealth;
 		// Whether player is within the trigger collider and can be attacked.
-		bool playerInRange;
+		bool playerInRange {
+			get {
+				return (data as EnemyAttackData).playerInRange;
+			}
+			set {
+				(data as EnemyAttackData).playerInRange = value;
+			}
+		}
+
 		// Timer for counting up to the next attack.
-		float timer;
+		public float timer {
+			get {
+				return (data as EnemyAttackData).timer;
+			}
+			set {
+				(data as EnemyAttackData).timer = value;
+			}
+		}
+
+		// only used for animation check
 		bool playerDead;
 
 		void Awake () {
+			data = new EnemyAttackData ();
+
 			// Setting up the references.
 			player = GameObject.FindGameObjectWithTag ("Player");
 			playerHealth = player.GetComponent <PlayerHealth> ();
@@ -39,7 +59,7 @@ namespace CompleteProject {
 		#region ISavable implementation
 
 		public override void LoadData (IData d) {
-			throw new System.NotImplementedException ();
+			data = (d as EnemyAttackData);
 		}
 
 		#endregion
