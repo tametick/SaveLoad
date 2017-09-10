@@ -2941,6 +2941,14 @@ Prefab:
       propertyPath: gameOverManager
       value: 
       objectReference: {fileID: 1139190136}
+    - target: {fileID: 8200000, guid: 4e5a0d387dc27394b81600988ad0216f, type: 2}
+      propertyPath: panLevelCustomCurve.m_RotationOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8200000, guid: 4e5a0d387dc27394b81600988ad0216f, type: 2}
+      propertyPath: reverbZoneMixCustomCurve.m_RotationOrder
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4e5a0d387dc27394b81600988ad0216f, type: 2}
   m_IsPrefabParent: 0
@@ -3540,6 +3548,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47ba11d1965a7411d8f6f951e4e1ca7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreText: {fileID: 1434159493}
   mainCamera: {fileID: 1851598977}
   player: {fileID: 672028130}
 --- !u!4 &1914482248
