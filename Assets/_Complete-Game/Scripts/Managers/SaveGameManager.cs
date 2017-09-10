@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using System;
 
 namespace CompleteProject {
 	public class SaveGameManager : MonoBehaviour {
@@ -94,12 +95,12 @@ namespace CompleteProject {
 				// only save live enemies 
 				if (enemy.GetComponent<EnemyHealth> ().currentHealth > 0) {
 					var enemyTypeData = new EnemyTypeData ();
-					if (enemy.name.StartsWith ("ZomBear")) {
-						enemyTypeData.enemyType = EnemyType.ZomBear;
-					} else if (enemy.name.StartsWith ("ZomBunny")) {
-						enemyTypeData.enemyType = EnemyType.ZomBunny;
+					if (enemy.name.ToLower ().StartsWith ("zombear")) {
+						enemyTypeData.enemyType = EnemyType.ZomBear.ToString ();
+					} else if (enemy.name.ToLower ().StartsWith ("zombunny")) {
+						enemyTypeData.enemyType = EnemyType.ZomBunny.ToString ();
 					} else {
-						enemyTypeData.enemyType = EnemyType.Hellephant;
+						enemyTypeData.enemyType = EnemyType.Hellephant.ToString ();
 					}
 
 					saveData.Add (enemyTypeData);
@@ -121,13 +122,42 @@ namespace CompleteProject {
 			// get serialized game state from storage & deserialize it
 			var loadString = PlayerPrefs.GetString (name);
 			saveData.FromString (loadString);
+
 			// load into current game
 			scoreText.GetComponent<ScoreManager> ().LoadData (saveData.ShiftData<ScoreManagerData> ());
-			enemyManager.GetComponent<EnemyManager> ().LoadData (saveData.ShiftData<EnemyManagerData> ());
+			var em = enemyManager.GetComponent<EnemyManager> ();
+			em.LoadData (saveData.ShiftData<EnemyManagerData> ());
 			mainCamera.GetComponent<CameraFollow> ().LoadData (saveData.ShiftData<CameraFollowData> ());
 			player.GetComponent<PlayerMovement> ().LoadData (saveData.ShiftData<PlayerMovementData> ());
 			player.GetComponent<PlayerHealth> ().LoadData (saveData.ShiftData<PlayerHealthData> ());
 			player.GetComponentInChildren<PlayerShooting> ().LoadData (saveData.ShiftData<PlayerShootingData> ());
+
+			// enemies
+			var enemies = em.LiveEnemies;
+
+			// clear and instantiate one from the saved game
+			EnemyManager.Clear ();
+			for (int e = 0; e < enemies; e++) {
+				EnemyTypeData enemyTypeData = saveData.ShiftData<EnemyTypeData> ();
+				GameObject enemy = null;
+				EnemyType t = (EnemyType)Enum.Parse (typeof(EnemyType), enemyTypeData.enemyType);
+				switch (t) {
+				case EnemyType.Hellephant:
+					enemy = GameObject.Instantiate (HellephantPrefab);
+					break;
+				case EnemyType.ZomBear:
+					enemy = GameObject.Instantiate (ZomBearPrefab);
+					break;
+				case EnemyType.ZomBunny:
+					enemy = GameObject.Instantiate (ZomBunnyPrefab);
+					break;
+				}
+				enemy.GetComponent<EnemyMovement> ().LoadData (saveData.ShiftData<EnemyMovementData> ());
+				enemy.GetComponent<EnemyHealth> ().LoadData (saveData.ShiftData<EnemyHealthData> ());
+				enemy.GetComponent<EnemyAttack> ().LoadData (saveData.ShiftData<EnemyAttackData> ());
+				EnemyManager.Add (enemy);
+			}
+				
 			Time.timeScale = 1;
 			return loadString;
 		}
