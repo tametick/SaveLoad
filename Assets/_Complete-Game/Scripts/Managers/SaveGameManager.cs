@@ -73,8 +73,8 @@ namespace CompleteProject {
 				saveData.Add (player.GetComponent<PlayerMovement> ().GetData ());
 				saveData.Add (player.GetComponent<PlayerHealth> ().GetData ());
 				saveData.Add (player.GetComponentInChildren<PlayerShooting> ().GetData ());
-				var saveString = saveData.ToString ();
 
+				var saveString = saveData.ToString ();
 				Time.timeScale = 1;
 
 				// write game state to storage
