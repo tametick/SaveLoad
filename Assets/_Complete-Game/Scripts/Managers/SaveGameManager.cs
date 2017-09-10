@@ -63,6 +63,10 @@ namespace CompleteProject {
 		public GameObject enemyManager;
 		public GameObject scoreText;
 
+		public GameObject HellephantPrefab;
+		public GameObject ZomBearPrefab;
+		public GameObject ZomBunnyPrefab;
+
 		void Start () {
 			instance = this;
 			saveData = new SaveData ();
@@ -84,6 +88,27 @@ namespace CompleteProject {
 			saveData.Add (player.GetComponent<PlayerMovement> ().GetData ());
 			saveData.Add (player.GetComponent<PlayerHealth> ().GetData ());
 			saveData.Add (player.GetComponentInChildren<PlayerShooting> ().GetData ());
+
+			// enemies
+			foreach (GameObject enemy in EnemyManager.enemies) {
+				// only save live enemies 
+				if (enemy.GetComponent<EnemyHealth> ().currentHealth > 0) {
+					var enemyTypeData = new EnemyTypeData ();
+					if (enemy.name.StartsWith ("ZomBear")) {
+						enemyTypeData.enemyType = EnemyType.ZomBear;
+					} else if (enemy.name.StartsWith ("ZomBunny")) {
+						enemyTypeData.enemyType = EnemyType.ZomBunny;
+					} else {
+						enemyTypeData.enemyType = EnemyType.Hellephant;
+					}
+
+					saveData.Add (enemyTypeData);
+					saveData.Add (enemy.GetComponent<EnemyMovement> ().GetData ());
+					saveData.Add (enemy.GetComponent<EnemyHealth> ().GetData ());
+					saveData.Add (enemy.GetComponent<EnemyAttack> ().GetData ());
+				}
+			}
+
 			var saveString = saveData.ToString ();
 			Time.timeScale = 1;
 			// write game state to storage

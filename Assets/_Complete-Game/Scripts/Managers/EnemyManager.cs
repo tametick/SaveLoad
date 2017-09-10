@@ -2,8 +2,21 @@
 using System.Collections.Generic;
 
 namespace CompleteProject {
+	[System.Serializable]
 	public class EnemyManagerData : IData {
+		public int liveEnemies;
 		public float timer;
+	}
+
+	public enum EnemyType {
+		Hellephant,
+		ZomBear,
+		ZomBunny
+	}
+
+	[System.Serializable]
+	public class EnemyTypeData : IData {
+		public EnemyType enemyType;
 	}
 
 	public class EnemyManager : Savable {
@@ -39,6 +52,16 @@ namespace CompleteProject {
 		void Awake () {
 			enemies = new List<GameObject> ();
 			data = new EnemyManagerData ();
+		}
+
+		public new IData GetData () {
+			(data as EnemyManagerData).liveEnemies = 0;
+			foreach (GameObject enemy in enemies) {
+				if (enemy.GetComponent<EnemyHealth> ().currentHealth > 0) {
+					(data as EnemyManagerData).liveEnemies++;
+				}
+			}
+			return data;
 		}
 
 		#region implemented abstract members of Savable

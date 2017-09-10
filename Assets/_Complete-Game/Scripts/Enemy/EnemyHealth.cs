@@ -3,14 +3,22 @@
 namespace CompleteProject {
 	[System.Serializable]
 	public class EnemyHealthData: IData {
-
+		public int currentHealth;
 	}
 
 	public class EnemyHealth : Savable {
 		// The amount of health the enemy starts the game with.
 		public int startingHealth = 100;
 		// The current health the enemy has.
-		public int currentHealth;
+		public int currentHealth {
+			get {
+				return (data as EnemyHealthData).currentHealth;
+			}
+			set {
+				(data as EnemyHealthData).currentHealth = value;
+			}
+		}
+
 		// The speed at which the enemy sinks through the floor when dead.
 		public float sinkSpeed = 2.5f;
 		// The amount added to the player's score when the enemy dies.
@@ -32,8 +40,9 @@ namespace CompleteProject {
 		// Whether the enemy has started sinking through the floor.
 		bool isSinking;
 
-
 		void Awake () {
+			data = new EnemyHealthData ();
+
 			// Setting up the references.
 			anim = GetComponent <Animator> ();
 			enemyAudio = GetComponent <AudioSource> ();
@@ -47,7 +56,9 @@ namespace CompleteProject {
 		#region ISavable implementation
 
 		public override void LoadData (IData d) {
-			throw new System.NotImplementedException ();
+			data = d;
+
+			// we dont need to revive enemies after loading becuase we only save live enemies
 		}
 
 		#endregion
@@ -102,6 +113,9 @@ namespace CompleteProject {
 			enemyAudio.Play ();
 		}
 
+		internal void StopAudio () {
+			enemyAudio.Stop ();
+		}
 
 		public void StartSinking () {
 			// Find and disable the Nav Mesh Agent.

@@ -20,6 +20,8 @@ namespace CompleteProject {
 
 
 		void Awake () {
+			data = new EnemyMovementData ();
+
 			// Set up the references.
 			player = GameObject.FindGameObjectWithTag ("Player").transform;
 			playerHealth = player.GetComponent <PlayerHealth> ();
@@ -41,8 +43,8 @@ namespace CompleteProject {
 		#endregion
 
 		public new IData GetData () {
-			(data as PlayerMovementData).position = transform.position;
-			(data as PlayerMovementData).rotation = transform.rotation.eulerAngles;
+			(data as EnemyMovementData).position = transform.position;
+			(data as EnemyMovementData).rotation = transform.rotation.eulerAngles;
 			return data;
 		}
 

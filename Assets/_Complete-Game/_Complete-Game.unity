@@ -3552,6 +3552,9 @@ MonoBehaviour:
   mainCamera: {fileID: 1851598977}
   enemyManager: {fileID: 14871708}
   scoreText: {fileID: 1434159493}
+  HellephantPrefab: {fileID: 153412, guid: 548c56f4bcf4db24b8aa057e9846a005, type: 2}
+  ZomBearPrefab: {fileID: 100000, guid: ea3c2728ef33e3a4d99527a86cda6465, type: 2}
+  ZomBunnyPrefab: {fileID: 100002, guid: e5171f72421770240bd7c3989fe351e3, type: 2}
 --- !u!4 &1914482248
 Transform:
   m_ObjectHideFlags: 0
