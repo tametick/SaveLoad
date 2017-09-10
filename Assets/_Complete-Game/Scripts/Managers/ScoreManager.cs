@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 namespace CompleteProject {
-	
+	[System.Serializable]
 	public class ScoreManagerData : IData {
 		public int score;
 	}
