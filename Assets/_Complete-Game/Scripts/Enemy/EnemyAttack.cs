@@ -26,7 +26,7 @@ namespace CompleteProject {
 		bool playerInRange;
 		// Timer for counting up to the next attack.
 		float timer;
-
+		bool playerDead;
 
 		void Awake () {
 			// Setting up the references.
@@ -63,19 +63,28 @@ namespace CompleteProject {
 
 
 		void Update () {
+			if (enemyHealth.currentHealth <= 0)
+				return;
+
 			// Add the time since Update was last called to the timer.
 			timer += Time.deltaTime;
 
 			// If the timer exceeds the time between attacks, the player is in range and this enemy is alive...
-			if (timer >= timeBetweenAttacks && playerInRange && enemyHealth.currentHealth > 0) {
+			if (timer >= timeBetweenAttacks && playerInRange) {
 				// ... attack.
 				Attack ();
 			}
 
 			// If the player has zero or less health...
 			if (playerHealth.currentHealth <= 0) {
-				// ... tell the animator the player is dead.
-				anim.SetTrigger ("PlayerDead");
+				if (!playerDead) {
+					playerDead = true;
+					// ... tell the animator the player is dead.
+					anim.SetTrigger ("PlayerDead");
+				}
+			} else if (playerDead) {
+				playerDead = false;
+				anim.SetTrigger ("PlayerRevived");
 			}
 		}
 
