@@ -6,20 +6,30 @@ using UnityEngine.SceneManagement;
 namespace CompleteProject {
 	[System.Serializable]
 	public class PlayerHealthData: IData {
-
+		public int currentHealth;
+		public bool isDead;
 	}
 
 	public class PlayerHealth : Savable {
 		// The amount of health the player starts the game with.
 		public int startingHealth = 100;
 		// The current health the player has.
-		public int currentHealth;
+		public int currentHealth {
+			get {
+				return (data as PlayerHealthData).currentHealth;
+			}
+			set {
+				(data as PlayerHealthData).currentHealth = value;
+			}
+		}
+
 		// Reference to the UI's health bar.
 		public Slider healthSlider;
 		// Reference to an image to flash on the screen on being hurt.
 		public Image damageImage;
 		// The audio clip to play when the player dies.
 		public AudioClip deathClip;
+		AudioClip hurtClip;
 		// The speed the damageImage will fade at.
 		public float flashSpeed = 5f;
 		// The colour the damageImage is set to, to flash.
@@ -35,15 +45,25 @@ namespace CompleteProject {
 		// Reference to the PlayerShooting script.
 		PlayerShooting playerShooting;
 		// Whether the player is dead.
-		bool isDead;
+		public bool isDead {
+			get {
+				return (data as PlayerHealthData).isDead;
+			}
+			set {
+				(data as PlayerHealthData).isDead = value;
+			}
+		}
+
 		// True when the player gets damaged.
 		bool damaged;
 
-
 		void Awake () {
+			data = new PlayerHealthData ();
+
 			// Setting up the references.
 			anim = GetComponent <Animator> ();
 			playerAudio = GetComponent <AudioSource> ();
+			hurtClip = playerAudio.clip;
 			playerMovement = GetComponent <PlayerMovement> ();
 			playerShooting = GetComponentInChildren <PlayerShooting> ();
 
@@ -54,7 +74,22 @@ namespace CompleteProject {
 		#region implemented abstract members of Savable
 
 		public override void LoadData (IData d) {
-			throw new System.NotImplementedException ();
+			PlayerHealthData oldData = d as PlayerHealthData;
+
+			if ((data as PlayerHealthData).isDead && !oldData.isDead) {
+				// revive
+				anim.SetTrigger ("Revive");
+
+				// restore default sound
+				if (playerAudio.isPlaying)
+					playerAudio.Stop ();
+				playerAudio.clip = hurtClip;
+
+				playerMovement.enabled = true;
+				playerShooting.enabled = true;
+			}
+
+			data = oldData;
 		}
 
 		#endregion
@@ -73,6 +108,9 @@ namespace CompleteProject {
 
 			// Reset the damaged flag.
 			damaged = false;
+
+			// Set the health bar's value to the current health.
+			healthSlider.value = currentHealth;
 		}
 
 
@@ -82,9 +120,6 @@ namespace CompleteProject {
 
 			// Reduce the current health by the damage amount.
 			currentHealth -= amount;
-
-			// Set the health bar's value to the current health.
-			healthSlider.value = currentHealth;
 
 			// Play the hurt sound effect.
 			playerAudio.Play ();
