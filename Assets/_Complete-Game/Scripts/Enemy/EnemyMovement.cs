@@ -4,7 +4,8 @@ using System.Collections;
 namespace CompleteProject {
 	[System.Serializable]
 	public class EnemyMovementData: IData {
-
+		public Vector3 position;
+		public Vector3 rotation;
 	}
 
 	public class EnemyMovement : Savable {
@@ -29,10 +30,22 @@ namespace CompleteProject {
 		#region implemented abstract members of Savable
 
 		public override void LoadData (IData d) {
-			throw new System.NotImplementedException ();
+			var oldData = d as EnemyMovementData;
+
+			transform.position = oldData.position;
+			transform.rotation = Quaternion.Euler (oldData.rotation);
+
+			data = oldData;
 		}
 
 		#endregion
+
+		public new IData GetData () {
+			(data as PlayerMovementData).position = transform.position;
+			(data as PlayerMovementData).rotation = transform.rotation.eulerAngles;
+			return data;
+		}
+
 
 		void Update () {
 			// If the enemy and the player have health left...
