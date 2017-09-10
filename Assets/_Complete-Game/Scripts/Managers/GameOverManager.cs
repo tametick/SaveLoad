@@ -2,8 +2,8 @@
 
 namespace CompleteProject {
 	public class GameOverManager : MonoBehaviour {
-		public PlayerHealth playerHealth;
 		// Reference to the player's health.
+		public PlayerHealth playerHealth;
 		bool isOver;
 
 		Animator anim;
