@@ -55,9 +55,10 @@ namespace CompleteProject {
 
 		SaveData saveData;
 
-		public GameObject scoreText;
-		public GameObject mainCamera;
 		public GameObject player;
+		public GameObject mainCamera;
+		public GameObject enemyManager;
+		public GameObject scoreText;
 
 		void Start () {
 			saveData = new SaveData ();
@@ -71,6 +72,7 @@ namespace CompleteProject {
 				// clear old saved data & deserialize current game state 
 				saveData.Clear ();
 				saveData.Add (scoreText.GetComponent<ScoreManager> ().GetData ());
+				saveData.Add (enemyManager.GetComponent<EnemyManager> ().GetData ());
 				saveData.Add (mainCamera.GetComponent<CameraFollow> ().GetData ());
 				saveData.Add (player.GetComponent<PlayerMovement> ().GetData ());
 				saveData.Add (player.GetComponent<PlayerHealth> ().GetData ());
@@ -91,6 +93,7 @@ namespace CompleteProject {
 
 				// load into current game
 				scoreText.GetComponent<ScoreManager> ().LoadData (saveData.ShiftData<ScoreManagerData> ());
+				enemyManager.GetComponent<EnemyManager> ().LoadData (saveData.ShiftData<EnemyManagerData> ());
 				mainCamera.GetComponent<CameraFollow> ().LoadData (saveData.ShiftData<CameraFollowData> ());
 				player.GetComponent<PlayerMovement> ().LoadData (saveData.ShiftData<PlayerMovementData> ());
 				player.GetComponent<PlayerHealth> ().LoadData (saveData.ShiftData<PlayerHealthData> ());

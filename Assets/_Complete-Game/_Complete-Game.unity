@@ -3548,9 +3548,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47ba11d1965a7411d8f6f951e4e1ca7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreText: {fileID: 1434159493}
-  mainCamera: {fileID: 1851598977}
   player: {fileID: 672028130}
+  mainCamera: {fileID: 1851598977}
+  enemyManager: {fileID: 14871708}
+  scoreText: {fileID: 1434159493}
 --- !u!4 &1914482248
 Transform:
   m_ObjectHideFlags: 0

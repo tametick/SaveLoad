@@ -1,22 +1,52 @@
 ﻿using UnityEngine;
 
 namespace CompleteProject {
-	public class EnemyManager : MonoBehaviour {
+	public class EnemyManagerData : IData {
+		public float timer;
+	}
+
+	public class EnemyManager : Savable {
 		// Reference to the player's heatlh.
 		public PlayerHealth playerHealth;
 		// The enemy prefab to be spawned.
 		public GameObject enemy;
 		// How long between each spawn.
 		public float spawnTime = 3f;
+
+		public float timer {
+			get {
+				return (data as EnemyManagerData).timer;
+			}
+			set {
+				(data as EnemyManagerData).timer = value;
+			}
+		}
+
 		// An array of the spawn points this enemy can spawn from.
 		public Transform[] spawnPoints;
 
-
-		void Start () {
-			// Call the Spawn function after a delay of the spawnTime and then continue to call after the same amount of time.
-			InvokeRepeating ("Spawn", spawnTime, spawnTime);
+		void Awake () {
+			data = new EnemyManagerData ();
 		}
 
+		#region implemented abstract members of Savable
+
+		public override void LoadData (IData d) {
+			data = d;
+		}
+
+		#endregion
+
+		void Update () {
+			// Add the time since Update was last called to the timer.
+			timer += Time.deltaTime;
+
+			// If the timer exceeds the time between attacks, the player is in range and this enemy is alive...
+			if (timer >= spawnTime) {
+				timer = 0;
+				Spawn ();
+			}
+		}
 
 		void Spawn () {
 			// If the player has no health left...
