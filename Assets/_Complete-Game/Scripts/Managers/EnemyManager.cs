@@ -7,7 +7,15 @@ namespace CompleteProject {
 	}
 
 	public class EnemyManager : Savable {
-		public static List<GameObject> enemies;
+		internal static List<GameObject> enemies;
+
+		internal static void Clear () {
+			while (enemies.Count > 0) {
+				var e = enemies [0];
+				enemies.RemoveAt (0);
+				GameObject.Destroy (e);
+			}
+		}
 
 		// Reference to the player's heatlh.
 		public PlayerHealth playerHealth;

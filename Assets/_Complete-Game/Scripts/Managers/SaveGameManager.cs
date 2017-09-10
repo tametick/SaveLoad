@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace CompleteProject {
 	public class SaveGameManager : MonoBehaviour {
+		internal static SaveGameManager instance;
+
 		const string saveName = "SavedGame";
 		const string startSaveName = "GameStart";
 		const string saveKey = "1";
@@ -62,8 +64,14 @@ namespace CompleteProject {
 		public GameObject scoreText;
 
 		void Start () {
+			instance = this;
 			saveData = new SaveData ();
 			Save (startSaveName);
+		}
+
+		internal void Restart () {
+			EnemyManager.Clear ();
+			Load (startSaveName);
 		}
 
 		string Save (string name) {
