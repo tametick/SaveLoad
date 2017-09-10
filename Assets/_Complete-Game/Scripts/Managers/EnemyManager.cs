@@ -20,6 +20,7 @@ namespace CompleteProject {
 	}
 
 	public class EnemyManager : Savable {
+		// there can be several enemy managers but they all share one list of enemies
 		internal static List<GameObject> enemies;
 
 		internal static void Clear () {
@@ -33,6 +34,7 @@ namespace CompleteProject {
 		internal static void Add (GameObject enemy) {
 			enemies.Add (enemy);
 		}
+		//
 
 		// Reference to the player's heatlh.
 		public PlayerHealth playerHealth;
