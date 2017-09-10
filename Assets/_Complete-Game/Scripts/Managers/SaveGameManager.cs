@@ -6,6 +6,7 @@ using UnityEngine;
 namespace CompleteProject {
 	public class SaveGameManager : MonoBehaviour {
 		const string saveName = "SavedGame";
+		const string startSaveName = "GameStart";
 		const string saveKey = "1";
 		const string loadKey = "2";
 
@@ -62,44 +63,48 @@ namespace CompleteProject {
 
 		void Start () {
 			saveData = new SaveData ();
+			Save (startSaveName);
+		}
+
+		string Save (string name) {
+			Time.timeScale = 0;
+			// clear old saved data & deserialize current game state 
+			saveData.Clear ();
+			saveData.Add (scoreText.GetComponent<ScoreManager> ().GetData ());
+			saveData.Add (enemyManager.GetComponent<EnemyManager> ().GetData ());
+			saveData.Add (mainCamera.GetComponent<CameraFollow> ().GetData ());
+			saveData.Add (player.GetComponent<PlayerMovement> ().GetData ());
+			saveData.Add (player.GetComponent<PlayerHealth> ().GetData ());
+			saveData.Add (player.GetComponentInChildren<PlayerShooting> ().GetData ());
+			var saveString = saveData.ToString ();
+			Time.timeScale = 1;
+			// write game state to storage
+			PlayerPrefs.SetString (name, saveString);
+			return saveString;
+		}
+
+		string Load (string name) {
+			Time.timeScale = 0;
+			// get serialized game state from storage & deserialize it
+			var loadString = PlayerPrefs.GetString (name);
+			saveData.FromString (loadString);
+			// load into current game
+			scoreText.GetComponent<ScoreManager> ().LoadData (saveData.ShiftData<ScoreManagerData> ());
+			enemyManager.GetComponent<EnemyManager> ().LoadData (saveData.ShiftData<EnemyManagerData> ());
+			mainCamera.GetComponent<CameraFollow> ().LoadData (saveData.ShiftData<CameraFollowData> ());
+			player.GetComponent<PlayerMovement> ().LoadData (saveData.ShiftData<PlayerMovementData> ());
+			player.GetComponent<PlayerHealth> ().LoadData (saveData.ShiftData<PlayerHealthData> ());
+			player.GetComponentInChildren<PlayerShooting> ().LoadData (saveData.ShiftData<PlayerShootingData> ());
+			Time.timeScale = 1;
+			return loadString;
 		}
 
 		void Update () {
-			
 			if (Input.GetKeyUp (saveKey)) {
-				Time.timeScale = 0;
-
-				// clear old saved data & deserialize current game state 
-				saveData.Clear ();
-				saveData.Add (scoreText.GetComponent<ScoreManager> ().GetData ());
-				saveData.Add (enemyManager.GetComponent<EnemyManager> ().GetData ());
-				saveData.Add (mainCamera.GetComponent<CameraFollow> ().GetData ());
-				saveData.Add (player.GetComponent<PlayerMovement> ().GetData ());
-				saveData.Add (player.GetComponent<PlayerHealth> ().GetData ());
-				saveData.Add (player.GetComponentInChildren<PlayerShooting> ().GetData ());
-
-				var saveString = saveData.ToString ();
-				Time.timeScale = 1;
-
-				// write game state to storage
-				PlayerPrefs.SetString (saveName, saveString);
+				var saveString = Save (saveName);
 				print ("saved\n" + saveString);
-			} else if (Input.GetKeyUp (loadKey)) {
-				Time.timeScale = 0;
-
-				// get serialized game state from storage & deserialize it
-				var loadString = PlayerPrefs.GetString (saveName);
-				saveData.FromString (loadString);
-
-				// load into current game
-				scoreText.GetComponent<ScoreManager> ().LoadData (saveData.ShiftData<ScoreManagerData> ());
-				enemyManager.GetComponent<EnemyManager> ().LoadData (saveData.ShiftData<EnemyManagerData> ());
-				mainCamera.GetComponent<CameraFollow> ().LoadData (saveData.ShiftData<CameraFollowData> ());
-				player.GetComponent<PlayerMovement> ().LoadData (saveData.ShiftData<PlayerMovementData> ());
-				player.GetComponent<PlayerHealth> ().LoadData (saveData.ShiftData<PlayerHealthData> ());
-				player.GetComponentInChildren<PlayerShooting> ().LoadData (saveData.ShiftData<PlayerShootingData> ());
-
-				Time.timeScale = 1;
+			} else if (Input.GetKeyUp (loadKey) && PlayerPrefs.HasKey (saveName)) {
+				var loadString = Load (saveName);
 				print ("loaded\n" + loadString);
 			}
 		}
